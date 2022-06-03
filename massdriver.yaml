@@ -1,66 +1,211 @@
-# This file will be used to generate all of the schema-*.json files in a bundle
 schema: draft-07
-name: "gcp-gke-cluster"
-description: ""
-ref: github.com/YOUR_NAME_HERE/gcp-gke-cluster
-access: "public"
-type: "bundle"
+name: gcp-gke-cluster
+description: "GKE is a managed Kubernetes service in GCP that implements the full Kubernetes API, 4-way autoscaling, release channels and multi-cluster support."
+ref: github.com/massdriver-cloud/massdriver-bundles
+access: public
+type: bundle
 
 steps:
   - path: src
     provisioner: terraform
+  - path: core-services
+    provisioner: terraform
+  - path: custom-resources
+    provisioner: terraform
 
-# schema-params.json
-# JSON Schema sans-fields above
 params:
   examples:
-    - foo: US-West 2 VPC
-    - foo: US-East 1 VPC
+    - __name: Development
+      k8s_version: "1.21"
+      node_groups:
+        - name: small-pool
+          machine_type:
+            - e2-highcpu-2
+          min_size: 1
+          max_size: 5
+    - __name: Production
+      k8s_version: "1.21"
+      node_groups:
+        - name: big-pool-general
+          machine_type:
+            - n2-standard-16
+          min_size: 1
+          max_size: 20
+        - name: big-pool-high-mem
+          machine_type:
+            - n2-highmem-16
+          min_size: 1
+          max_size: 6
   required:
-    - foo
+    - k8s_version
+    - cluster_configuration
+    - cluster_networking
+    - node_groups
+    - core_services
   properties:
-    foo:
+    k8s_version:
       type: string
-      title: Foo
-      description: Name of gcp-gke-cluster
-      default: ""
-      examples:
-        - US-West 2 VPC
-        - US-East 1 VPC
+      title: Kubernetes Version
+      description: The version of Kubernetes to run
+      enum:
+        - "1.19"
+        - "1.20"
+        - "1.21"
+    cluster_configuration:
+      type: object
+      title: Cluster Configuration
+      description: "Configure the basic settings and capabilities of the cluster"
+      properties:
+        enable_binary_authorization:
+          type: boolean
+          title: Enable Binary Authorization
+          default: false
+          description: "WARNING: This can prevent container workloads from running! Binary Authorization is a deploy-time security control that ensures only trusted container images are deployed on Google Kubernetes Engine (GKE). More information here: https://cloud.google.com/binary-authorization"
+    cluster_networking:
+      type: object
+      title: Cluster Networking
+      description: "Configure the network configuration of the cluster"
+      required:
+        - cluster_ipv4_cidr_block
+        - services_ipv4_cidr_block
+        - master_ipv4_cidr_block
+      properties:
+        cluster_ipv4_cidr_block:
+          type: string
+          pattern: ^(?:(?:[0-9]{1,3}\.){3}[0-9]{1,3})?(?:\/(?:[0-9]|[1-2][0-9]|3[0-2]))?$
+          message:
+            pattern: Must be a valid CIDR block (10.100.0.0/16) or a netmask (/16)
+          title: Pods IPv4 CIDR Block
+          default: "/16"
+          description: "CIDR block to use for kubernetes pods. Set to /netmask (e.g. /16) to have a range chosen with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use."
+        services_ipv4_cidr_block:
+          type: string
+          pattern: ^(?:(?:[0-9]{1,3}\.){3}[0-9]{1,3})?(?:\/(?:[0-9]|[1-2][0-9]|3[0-2]))?$
+          message:
+            pattern: Must be a valid CIDR block (10.100.0.0/20) or a netmask (/20)
+          title: Services IPv4 CIDR Block
+          default: "/20"
+          description: "CIDR block to use for kubernetes services. Set to /netmask (e.g. /20) to have a range chosen with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use."
+        master_ipv4_cidr_block:
+          $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/cidr.json
+          title: Cluster IPv4 CIDR Block
+          default: "172.16.0.0/28"
+          description: "CIDR block to use for kubernetes control plane. The mask for this must be exactly /28. Must be from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16), and should not conflict with other ranges in use. It is recommended to use consecutive /28 blocks from the 172.16.0.0/16 range for all your GKE clusters (172.16.0.0/28 for the first cluster, 172.16.0.16/28 for the second, etc.)."
+    node_groups:
+      type: array
+      title: Node Groups
+      descrition: Node groups to provision
+      minItems: 1
+      items:
+        type: object
+        title: Node Group
+        description: Definition of a node group
+        required:
+          - name
+          - machine_type
+          - min_size
+          - max_size
+          - md_set_id
+        properties:
+          name:
+            type: string
+            title: Node Group Name
+            description: The name of the node group
+            # https://cloud.google.com/compute/docs/naming-resources#resource-name-format
+            pattern: "[a-z]([-a-z0-9]*[a-z0-9])?"
+            minLength: 1
+            maxLength: 40
+            default: ""
+          min_size:
+            type: number
+            title: Minimum Size
+            description: Minimum number of instances in the node group
+            default: 1
+          max_size:
+            type: number
+            title: Maximum Size
+            description: Maximum number of instances in the node group
+            default: 10
+          machine_type:
+            type: string
+            title: Machine type
+            description: Machine type to use in the node group
+            enum:
+              - e2-micro
+              - e2-small
+              - e2-medium
+              - e2-standard-2
+              - e2-standard-4
+              - e2-standard-8
+              - e2-standard-16
+              - e2-standard-32
+              - e2-highmem-2
+              - e2-highmem-4
+              - e2-highmem-8
+              - e2-highmem-16
+              - e2-highcpu-2
+              - e2-highcpu-4
+              - e2-highcpu-8
+              - e2-highcpu-16
+              - e2-highcpu-32
+          md_set_id:
+            type: string
+    core_services:
+      type: object
+      title: Core Services
+      description: Configure core services in Kubernetes for Massdriver to manage
+      required: []
+      properties:
+        enable_ingress:
+          type: boolean
+          title: Enable Ingress
+          description: Enabling this will create an nginx ingress controller in the cluster, allowing internet traffic to flow into web accessible services within the cluster
+          default: false
+        cloud_dns_managed_zones:
+          type: array
+          title: Cloud DNS Managed Zones
+          description: List any Cloud DNS Managed Zone IDs associated with this cluster to allow the Kubernetes to automatically manage DNS records and SSL certificates
+          default: []
+          items:
+            type: string
 
-# schema-connections.json
-# Named list of input connections (artifacts) (map[name]artifact)
 connections:
-  properties: {}
-  # required:
-  # - aws_authentication
-  # - network
-  # properties:
-  #   aws_authentication:
-  #     $ref: massdriver/aws-iam-role
-  #   network:
-  #     $ref: massdriver/aws-regional-cloud
+  required:
+    - gcp_authentication
+    - subnetwork
+  properties:
+    gcp_authentication:
+      $ref: massdriver/gcp-service-account
+    subnetwork:
+      $ref: massdriver/gcp-subnetwork
 
-# schema-artifacts.json
-# Named list of output artifacts  (map[name]artifact)
 artifacts:
-  properties: {}
-  # required:
-  #   - network
-  # properties:
-  #   network:
-  #     $ref: massdriver/aws-regional-cloud
+  required:
+    - kubernetes_cluster
+  properties:
+    kubernetes_cluster:
+      $ref: massdriver/kubernetes-cluster
 
-# schema-ui.json
-# List of form customizations for params-schema
 ui:
-  ui:order:
-    - "*"
-  ## set top level ui:wiget
-  # secret_key:
-  #    ui:widget: "password"
-  ## Set key in an array of objects
-  # secrets:
-  #   items:
-  #     mdKeyId:
-  #       ui:widget: "hidden"
+  items:
+    ui:order:
+      - cluster_configuration
+      - cluster_networking
+      - node_groups
+      - core_services
+      - "*"
+  node_groups:
+    items:
+      ui:order:
+        - name
+        - machine_type
+        - min_size
+        - max_size
+        - "*"
+      md_set_id:
+        ui:widget: hidden
+  core_services:
+    items:
+      ui:order:
+        - enable_ingress
+        - cloud_dns_managed_zones

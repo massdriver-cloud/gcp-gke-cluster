@@ -1,10 +1,4 @@
-# Operator Guide
-
-This is the guide for your bundle. It will appear under the `guide` button in Massdriver.
-
-Use it to describe to users how the bundle works, use cases for the bundle, and event examples.
-
-<!-- We may want to polish this for template before releasing --> 
+# Operator Guide for "{type}"
 
 ## TODO:
 
@@ -36,7 +30,10 @@ _Describe how it works_
 
 #### Best Practices
 
-#### Security 
+* Creates a custom service account for GKE nodes with limited permissions for node-specific actions (such as pulling container images or sending logs to Stackdriver)
+* Enables [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) to allow pods to authenticate via GCP service accounts instead of static credentials or node service account permissions
+
+#### Security
 
 #### Auditing
 
