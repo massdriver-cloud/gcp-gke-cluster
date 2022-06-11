@@ -41,7 +41,7 @@ resource "google_compute_firewall" "control_plane_ingress" {
 }
 
 module "ingress_nginx" {
-  source             = "./modules/k8s-ingress-nginx"
+  source             = "github.com/massdriver-cloud/terraform-modules//k8s-ingress-nginx?ref=c336d59"
   count              = var.core_services.enable_ingress ? 1 : 0
   kubernetes_cluster = local.kubernetes_cluster_artifact
   md_metadata        = var.md_metadata
@@ -50,7 +50,7 @@ module "ingress_nginx" {
 }
 
 module "external_dns" {
-  source                  = "./modules/k8s-external-dns-gcp"
+  source                  = "github.com/massdriver-cloud/terraform-modules//k8s-external-dns-gcp?ref=c336d59"
   count                   = local.enable_external_dns ? 1 : 0
   kubernetes_cluster      = local.kubernetes_cluster_artifact
   md_metadata             = var.md_metadata
@@ -61,7 +61,7 @@ module "external_dns" {
 }
 
 module "cert_manager" {
-  source                  = "./modules/k8s-cert-manager-gcp"
+  source                  = "github.com/massdriver-cloud/terraform-modules//k8s-cert-manager-gcp?ref=c336d59"
   count                   = local.enable_cert_manager ? 1 : 0
   kubernetes_cluster      = local.kubernetes_cluster_artifact
   md_metadata             = var.md_metadata
