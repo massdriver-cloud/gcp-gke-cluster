@@ -5,7 +5,7 @@ terraform {
   required_providers {
     massdriver = {
       source  = "massdriver-cloud/massdriver"
-      version = "~> 1.0"
+      version = ">= 1.1.0"
     }
     google-beta = {
       source  = "hashicorp/google-beta"
