@@ -170,7 +170,12 @@ params:
           description: List any Cloud DNS Managed Zone IDs associated with this cluster to allow the Kubernetes to automatically manage DNS records and SSL certificates
           default: []
           items:
-            type: string
+            type: object
+            # title intentionally left out, it makes the UI look weird
+            properties:
+              dnsZone:
+                type: string
+                title: Managed Zone
 
 connections:
   required:
@@ -212,3 +217,7 @@ ui:
       ui:order:
         - enable_ingress
         - cloud_dns_managed_zones
+    cloud_dns_managed_zones:
+      items:
+        dnsZone:
+          ui:field: dnsZonesDropdown
