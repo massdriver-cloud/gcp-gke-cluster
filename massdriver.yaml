@@ -167,7 +167,7 @@ params:
         cloud_dns_managed_zones:
           type: array
           title: Cloud DNS Managed Zones
-          description: List any Cloud DNS Managed Zone IDs associated with this cluster to allow the Kubernetes to automatically manage DNS records and SSL certificates
+          description: Select Cloud DNS Managed Zones associated with this cluster to allow the cluster to automatically manage DNS records and SSL certificates
           default: []
           items:
             type: object
