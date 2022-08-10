@@ -108,7 +108,6 @@ params:
           - machine_type
           - min_size
           - max_size
-          - md_set_id
         properties:
           name:
             type: string
