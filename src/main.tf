@@ -128,7 +128,7 @@ resource "google_container_cluster" "cluster" {
 
 resource "google_container_node_pool" "nodes" {
   provider = google-beta
-  for_each = { for ng in var.node_groups : ng.md_set_id => ng }
+  for_each = { for ng in var.node_groups : ng.name => ng }
   name     = each.value.name
   cluster  = google_container_cluster.cluster.id
   version  = local.latest_node_version
