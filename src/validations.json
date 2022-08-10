@@ -1,6 +1,5 @@
 {
     "do_not_delete": [
-        "google_container_cluster.cluster",
-        "google_container_node_pool.*"
+        "google_container_cluster.cluster"
     ]
 }

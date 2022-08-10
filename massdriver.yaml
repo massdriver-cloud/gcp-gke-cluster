@@ -150,8 +150,6 @@ params:
               - e2-highcpu-8
               - e2-highcpu-16
               - e2-highcpu-32
-          md_set_id:
-            type: string
     core_services:
       type: object
       title: Core Services
@@ -204,8 +202,6 @@ ui:
         - min_size
         - max_size
         - "*"
-      md_set_id:
-        ui:widget: hidden
   core_services:
     items:
       ui:order:
