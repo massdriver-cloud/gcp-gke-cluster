@@ -4,14 +4,18 @@ locals {
   # it's critical that the zone is the "actual" domain thing.thing.thing.thing _not_ the
   # gcp hosted zone name of thing-thing-thing-thing (thus the replace)
   cloud_dns_managed_zones_to_domain_map = {
-    for zone in var.core_services.cloud_dns_managed_zones :
+    for zone in local.managed_zones :
     zone => replace(data.google_dns_managed_zone.hosted_zones[zone].name, "-", ".")
   }
   core_services_namespace = "md-core-services"
+
+  managed_zones = [for zone in var.core_services.cloud_dns_managed_zones :
+    length(split("/", zone.name)) > 1 ? split("/", zone.name)[3] : zone.name
+  ]
 }
 
 data "google_dns_managed_zone" "hosted_zones" {
-  for_each = toset(var.core_services.cloud_dns_managed_zones)
+  for_each = toset(local.managed_zones)
   name     = each.key
 }
 
