@@ -10,7 +10,7 @@ locals {
   core_services_namespace = "md-core-services"
 
   managed_zones = [for zone in var.core_services.cloud_dns_managed_zones :
-    length(split("/", zone.name)) > 1 ? split("/", zone.name)[3] : zone.name
+    length(split("/", zone)) > 1 ? split("/", zone)[3] : zone
   ]
 }
 
