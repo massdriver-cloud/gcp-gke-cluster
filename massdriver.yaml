@@ -56,8 +56,18 @@ params:
           title: Logging
           description: Configure logging for your cluster
           required:
+            - collection
             - destination 
           properties:
+            collection:
+              type: string
+              title: Log Collection
+              description: Stack for collecting logs
+              oneOf:
+                - title: "FluentD"
+                  const: "fluentd"
+                - title: "Disabled"
+                  const: "disabled"
             destination:
               type: string
               title: Destination
@@ -68,6 +78,22 @@ params:
               - title: "Disabled"
                 const: "disabled"
           dependencies:
+            # TODO: do we need anything configurable about fluentd? currently seems like no...
+            # collection:
+            #   oneOf:
+            #     - properties:
+            #         collection:
+            #           const: "fluentd"
+            #         fluentd:
+            #           type: object
+            #           title: FluentD
+            #           required: []
+            #           properties: {}
+            #       required:
+            #         - fluentd
+            #     - properties:
+            #         collection:
+            #           const: "Disabled"
             destination:
               oneOf:
                 - properties:
