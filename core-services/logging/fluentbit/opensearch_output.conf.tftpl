@@ -1,0 +1,20 @@
+[OUTPUT]
+    Name  opensearch
+    Match kube.*
+    Host  opensearch-master.${namespace}.svc.cluster.local
+    Port  9200
+    HTTP_User %%{${username}}
+    HTTP_Passwd %%{${password}}
+    Logstash_Format True
+    Logstash_Prefix "k8s-pod-logs"
+    Retry_Limit False
+[OUTPUT]
+    Name  opensearch
+    Match host.*
+    Host  opensearch-master.${namespace}.svc.cluster.local
+    Port  9200
+    HTTP_User %%{${username}}
+    HTTP_Passwd %%{${password}}
+    Logstash_Format True
+    Logstash_Prefix "k8s-node-logs"
+    Retry_Limit False

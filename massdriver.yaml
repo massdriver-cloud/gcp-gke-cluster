@@ -64,8 +64,8 @@ params:
               title: Log Collection
               description: Stack for collecting logs
               oneOf:
-                - title: "FluentD"
-                  const: "fluentd"
+                - title: "fluentbit"
+                  const: "fluentbit"
                 - title: "Disabled"
                   const: "disabled"
             destination:
@@ -78,19 +78,19 @@ params:
               - title: "Disabled"
                 const: "disabled"
           dependencies:
-            # TODO: do we need anything configurable about fluentd? currently seems like no...
+            # TODO: do we need anything configurable about fluentbit? currently seems like no...
             # collection:
             #   oneOf:
             #     - properties:
             #         collection:
-            #           const: "fluentd"
-            #         fluentd:
+            #           const: "fluentbit"
+            #         fluentbit:
             #           type: object
-            #           title: FluentD
+            #           title: fluentbit
             #           required: []
             #           properties: {}
             #       required:
-            #         - fluentd
+            #         - fluentbit
             #     - properties:
             #         collection:
             #           const: "Disabled"

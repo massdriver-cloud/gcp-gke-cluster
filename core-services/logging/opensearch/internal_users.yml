@@ -1,0 +1,17 @@
+# adapted from https://opensearch.org/docs/latest/security-plugin/configuration/yaml/#internal_usersyml
+---
+# This is the internal user database
+# The hash value is a bcrypt hash and can be generated with plugin/tools/hash.sh
+
+_meta:
+  type: "internalusers"
+  config_version: 2
+
+# Define your internal users here
+fluentbit:
+  hash: "$2y$12$Ms6U3GGZ6qcDzeqqLvdmTeitkjPyF4t.jh0q0FPlRFj7Xxi.63.iK"
+  reserved: false
+  hidden: false
+  backend_roles:
+  - "all_access"
+  static: false
