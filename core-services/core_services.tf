@@ -53,7 +53,7 @@ module "ingress_nginx" {
 }
 
 module "external_dns" {
-  source                  = "github.com/massdriver-cloud/terraform-modules//k8s-external-dns-gcp?ref=31f17d3"
+  source                  = "github.com/massdriver-cloud/terraform-modules//k8s-external-dns-gcp?ref=2af53ce"
   count                   = local.enable_external_dns ? 1 : 0
   kubernetes_cluster      = local.kubernetes_cluster_artifact
   md_metadata             = var.md_metadata
