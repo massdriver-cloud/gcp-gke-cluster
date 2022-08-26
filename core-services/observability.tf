@@ -2,6 +2,13 @@ locals {
   enable_opensearch = var.observability.logging.destination == "opensearch"
   enable_fluentbit  = var.observability.logging.collection == "fluentbit"
   o11y_namespace    = "md-observability"
+  fluent_pw_raw = random_password.fluentbit.result
+  // cost of 12 because that's what the opensearch security hash.sh utility uses
+  // see: https://github.com/opensearch-project/security/blob/main/src/main/java/org/opensearch/security/tools/Hasher.java#L81
+  fluent_pw_hash = bcrypt(local.fluent_pw_raw, 12)
+}
+resource "random_password" "fluentbit" {
+   length = 16
 }
 // Unless the user is running prometheus (or integrates an observability package like DD)
 // there isn't much point to this service.
@@ -26,7 +33,9 @@ module "opensearch" {
     securityConfig = {
       config = {
         data = {
-          "internal_users.yml" : file("${path.module}/logging/opensearch/internal_users.yml")
+          "internal_users.yml" : templatefile("${path.module}/logging/opensearch/internal_users.yml.tftpl", {
+            password = local.fluent_pw_hash
+          })
         }
       }
     }
@@ -50,7 +59,7 @@ module "fluentbit" {
     config = {
       outputs = templatefile("${path.module}/logging/fluentbit/opensearch_output.conf.tftpl", {
         username  = "fluentbit"
-        password  = "fluent-@ll-@ccess-s3cret"
+        password  = local.fluent_pw_raw
         namespace = local.o11y_namespace
       })
     }

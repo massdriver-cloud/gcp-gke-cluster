@@ -4,14 +4,14 @@
 # The hash value is a bcrypt hash and can be generated with plugin/tools/hash.sh
 
 _meta:
-  type: "internalusers"
+  type: internalusers
   config_version: 2
 
 # Define your internal users here
 fluentbit:
-  hash: "$2y$12$Ms6U3GGZ6qcDzeqqLvdmTeitkjPyF4t.jh0q0FPlRFj7Xxi.63.iK"
+  hash: ${password}
   reserved: false
   hidden: false
   backend_roles:
-  - "all_access"
+  - all_access
   static: false
