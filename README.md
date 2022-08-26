@@ -72,7 +72,24 @@ Form input parameters for configuring a bundle for deployment.
 - **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.19', '1.20', '1.21', '1.22']`.
 - **`node_groups`** *(array)*
   - **Items** *(object)*: Definition of a node group.
-    - **`machine_type`** *(string)*: Machine type to use in the node group. Must be one of: `['e2-micro', 'e2-small', 'e2-medium', 'e2-standard-2', 'e2-standard-4', 'e2-standard-8', 'e2-standard-16', 'e2-standard-32', 'e2-highmem-2', 'e2-highmem-4', 'e2-highmem-8', 'e2-highmem-16', 'e2-highcpu-2', 'e2-highcpu-4', 'e2-highcpu-8', 'e2-highcpu-16', 'e2-highcpu-32']`.
+    - **`machine_type`** *(string)*: Machine type to use in the node group.
+      - **One of**
+        - Shared-core: 2 vCPUs 2GB Memory
+        - Shared-core: 2 vCPUs 4GB Memory
+        - General: 2 vCPUs 8GB Memory
+        - General: 4 vCPUs 16GB Memory
+        - General: 8 vCPUs 32GB Memory
+        - General: 16 vCPUs 64GB Memory
+        - General: 32 vCPUs 64GB Memory
+        - Memory: 2 vCPUs 16GB Memory
+        - Memory: 4 vCPUs 32GB Memory
+        - Memory: 8 vCPUs 64GB Memory
+        - Memory: 16 vCPUs 128GB Memory
+        - CPU: 2 vCPUs 2GB Memory
+        - CPU: 4 vCPUs 4GB Memory
+        - CPU: 8 vCPUs 8GB Memory
+        - CPU: 16 vCPUs 16GB Memory
+        - CPU: 32 vCPUs 32GB Memory
     - **`max_size`** *(number)*: Maximum number of instances in the node group. Default: `10`.
     - **`min_size`** *(number)*: Minimum number of instances in the node group. Default: `1`.
     - **`name`** *(string)*: The name of the node group. Default: ``.
@@ -102,7 +119,7 @@ Form input parameters for configuring a bundle for deployment.
       "node_groups": [
           {
               "machine_type": [
-                  "n2-standard-16"
+                  "e2-standard-16"
               ],
               "max_size": 20,
               "min_size": 1,
@@ -110,7 +127,7 @@ Form input parameters for configuring a bundle for deployment.
           },
           {
               "machine_type": [
-                  "n2-highmem-16"
+                  "e2-highmem-16"
               ],
               "max_size": 6,
               "min_size": 1,
