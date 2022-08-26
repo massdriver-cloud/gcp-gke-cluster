@@ -1,11 +1,10 @@
 locals {
   enable_cert_manager = length(var.core_services.cloud_dns_managed_zones) > 0
   enable_external_dns = length(var.core_services.cloud_dns_managed_zones) > 0
-  # it's critical that the zone is the "actual" domain thing.thing.thing.thing _not_ the
-  # gcp hosted zone name of thing-thing-thing-thing (thus the replace)
+
   cloud_dns_managed_zones_to_domain_map = {
     for zone in local.managed_zones :
-    zone => replace(data.google_dns_managed_zone.hosted_zones[zone].name, "-", ".")
+    zone => data.google_dns_managed_zone.hosted_zones[zone].dns_name
   }
   core_services_namespace = "md-core-services"
 
@@ -54,7 +53,7 @@ module "ingress_nginx" {
 }
 
 module "external_dns" {
-  source                  = "github.com/massdriver-cloud/terraform-modules//k8s-external-dns-gcp?ref=c336d59"
+  source                  = "github.com/massdriver-cloud/terraform-modules//k8s-external-dns-gcp?ref=31f17d3"
   count                   = local.enable_external_dns ? 1 : 0
   kubernetes_cluster      = local.kubernetes_cluster_artifact
   md_metadata             = var.md_metadata
@@ -65,12 +64,11 @@ module "external_dns" {
 }
 
 module "cert_manager" {
-  source                  = "github.com/massdriver-cloud/terraform-modules//k8s-cert-manager-gcp?ref=c336d59"
-  count                   = local.enable_cert_manager ? 1 : 0
-  kubernetes_cluster      = local.kubernetes_cluster_artifact
-  md_metadata             = var.md_metadata
-  release                 = "cert-manager"
-  namespace               = local.core_services_namespace
-  cloud_dns_managed_zones = local.cloud_dns_managed_zones_to_domain_map
-  gcp_project_id          = var.gcp_authentication.data.project_id
+  source             = "github.com/massdriver-cloud/terraform-modules//k8s-cert-manager-gcp?ref=c336d59"
+  count              = local.enable_cert_manager ? 1 : 0
+  kubernetes_cluster = local.kubernetes_cluster_artifact
+  md_metadata        = var.md_metadata
+  release            = "cert-manager"
+  namespace          = local.core_services_namespace
+  gcp_project_id     = var.gcp_authentication.data.project_id
 }

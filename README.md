@@ -69,7 +69,7 @@ Form input parameters for configuring a bundle for deployment.
   - **`cloud_dns_managed_zones`** *(array)*: Select any Cloud DNS Managed Zones associated with this cluster to allow the cluster to automatically manage DNS records and SSL certificates. Default: `[]`.
     - **Items** *(string)*
   - **`enable_ingress`** *(boolean)*: Enabling this will create an nginx ingress controller in the cluster, allowing internet traffic to flow into web accessible services within the cluster. Default: `False`.
-- **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.19', '1.20', '1.21']`.
+- **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.19', '1.20', '1.21', '1.22']`.
 - **`node_groups`** *(array)*
   - **Items** *(object)*: Definition of a node group.
     - **`machine_type`** *(string)*: Machine type to use in the node group. Must be one of: `['e2-micro', 'e2-small', 'e2-medium', 'e2-standard-2', 'e2-standard-4', 'e2-standard-8', 'e2-standard-16', 'e2-standard-32', 'e2-highmem-2', 'e2-highmem-4', 'e2-highmem-8', 'e2-highmem-16', 'e2-highcpu-2', 'e2-highcpu-4', 'e2-highcpu-8', 'e2-highcpu-16', 'e2-highcpu-32']`.
