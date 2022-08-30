@@ -2,8 +2,11 @@ locals {
   enable_opensearch = var.observability.logging.destination == "opensearch"
   enable_fluentbit  = var.observability.logging.collection == "fluentbit"
   o11y_namespace    = "md-observability"
+  fluent_pw_raw = random_password.fluentbit_opensearch_password.result
+  // cost of 12 because that's what the opensearch security hash.sh utility uses
+  // see: https://github.com/opensearch-project/security/blob/main/src/main/java/org/opensearch/security/tools/Hasher.java#L81
+  fluent_pw_hash = bcrypt(local.fluent_pw_raw, 12)
 }
-
 resource "random_password" "fluentbit_opensearch_password" {
   length = 16
   special = false
@@ -34,8 +37,8 @@ module "opensearch" {
       config = {
         data = {
           "internal_users.yml" : templatefile("${path.module}/logging/opensearch/internal_users.yml.tftpl", {
-            password = bcrypt(random_password.fluentbit_opensearch_password.result, 12)
-          })
+            password =  local.fluent_pw_hash
+        })
         }
       }
     }
@@ -59,7 +62,7 @@ module "fluentbit" {
     config = {
       outputs = templatefile("${path.module}/logging/fluentbit/opensearch_output.conf.tftpl", {
         username  = "fluentbit"
-        password  = random_password.fluentbit_opensearch_password.result
+        password  = local.fluent_pw_raw
         namespace = local.o11y_namespace
       })
     }
