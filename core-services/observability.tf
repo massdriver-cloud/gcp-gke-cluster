@@ -3,6 +3,12 @@ locals {
   enable_fluentbit  = var.observability.logging.collection == "fluentbit"
   o11y_namespace    = "md-observability"
 }
+
+resource "random_password" "fluentbit_opensearch_password" {
+  length = 16
+  special = false
+}
+
 // Unless the user is running prometheus (or integrates an observability package like DD)
 // there isn't much point to this service.
 module "kube-state-metrics" {
@@ -14,7 +20,8 @@ module "kube-state-metrics" {
 
 module "opensearch" {
   count              = local.enable_opensearch ? 1 : 0
-  source             = "github.com/massdriver-cloud/terraform-modules//k8s-opensearch?ref=2400d29"
+#   source             = "github.com/massdriver-cloud/terraform-modules//k8s-opensearch?ref=k8s-opensearch-update"
+  source             = "github.com/massdriver-cloud/terraform-modules//k8s-opensearch?ref=main"
   md_metadata        = var.md_metadata
   release            = "opensearch"
   namespace          = local.o11y_namespace
@@ -26,7 +33,9 @@ module "opensearch" {
     securityConfig = {
       config = {
         data = {
-          "internal_users.yml" : file("${path.module}/logging/opensearch/internal_users.yml")
+          "internal_users.yml" : templatefile("${path.module}/logging/opensearch/internal_users.yml.tftpl", {
+            password = bcrypt(random_password.fluentbit_opensearch_password.result, 12)
+          })
         }
       }
     }
@@ -50,7 +59,7 @@ module "fluentbit" {
     config = {
       outputs = templatefile("${path.module}/logging/fluentbit/opensearch_output.conf.tftpl", {
         username  = "fluentbit"
-        password  = "fluent-@ll-@ccess-s3cret"
+        password  = random_password.fluentbit_opensearch_password.result
         namespace = local.o11y_namespace
       })
     }
