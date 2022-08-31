@@ -1,6 +1,6 @@
 locals {
   enable_opensearch = var.observability.logging.destination == "opensearch"
-  enable_fluentbit  = var.observability.logging.collection == "fluentbit"
+  enable_fluentbit  = local.enable_opensearch
   o11y_namespace    = "md-observability"
 }
 
