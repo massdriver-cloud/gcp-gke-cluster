@@ -2,13 +2,13 @@ locals {
   enable_opensearch = var.observability.logging.destination == "opensearch"
   enable_fluentbit  = var.observability.logging.collection == "fluentbit"
   o11y_namespace    = "md-observability"
-  fluent_pw_raw = random_password.fluentbit_opensearch_password.result
+  fluent_pw_raw     = random_password.fluentbit_opensearch_password.result
   // cost of 12 because that's what the opensearch security hash.sh utility uses
   // see: https://github.com/opensearch-project/security/blob/main/src/main/java/org/opensearch/security/tools/Hasher.java#L81
   fluent_pw_hash = bcrypt(local.fluent_pw_raw, 12)
 }
 resource "random_password" "fluentbit_opensearch_password" {
-  length = 16
+  length  = 16
   special = false
 }
 
@@ -23,8 +23,7 @@ module "kube-state-metrics" {
 
 module "opensearch" {
   count              = local.enable_opensearch ? 1 : 0
-#   source             = "github.com/massdriver-cloud/terraform-modules//k8s-opensearch?ref=k8s-opensearch-update"
-  source             = "github.com/massdriver-cloud/terraform-modules//k8s-opensearch?ref=main"
+  source             = "github.com/massdriver-cloud/terraform-modules//k8s-opensearch?ref=rip-out-tls"
   md_metadata        = var.md_metadata
   release            = "opensearch"
   namespace          = local.o11y_namespace
@@ -32,15 +31,6 @@ module "opensearch" {
   helm_additional_values = {
     persistence = {
       size = var.observability.logging.opensearch.persistence_size
-    }
-    securityConfig = {
-      config = {
-        data = {
-          "internal_users.yml" : templatefile("${path.module}/logging/opensearch/internal_users.yml.tftpl", {
-            password =  local.fluent_pw_hash
-        })
-        }
-      }
     }
   }
   enable_dashboards = true
