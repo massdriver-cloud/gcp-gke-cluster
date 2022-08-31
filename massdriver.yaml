@@ -57,7 +57,7 @@ params:
           description: Configure logging for your cluster
           required:
             - collection
-            - destination 
+            - destination
           properties:
             collection:
               type: string
@@ -285,4 +285,3 @@ ui:
       persistence_size:
         ui:field: conversionFieldData
         default: Gibabytes
-
