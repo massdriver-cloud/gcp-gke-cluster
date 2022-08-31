@@ -234,7 +234,8 @@ ui:
         ui:field: dnsZonesDropdown
         cloud: gcp
   observability:
-    opensearch:
-      persistence_size:
-        ui:field: conversionFieldData
-        default: Gibabytes
+    logging:
+      opensearch:
+        persistence_size:
+          ui:field: conversionFieldData
+          default: Gibabytes
