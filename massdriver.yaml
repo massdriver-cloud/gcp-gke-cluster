@@ -63,6 +63,7 @@ params:
               type: string
               title: Log Collection
               description: Stack for collecting logs
+              default: "disabled"
               oneOf:
                 - title: "fluentbit"
                   const: "fluentbit"
@@ -72,28 +73,13 @@ params:
               type: string
               title: Destination
               description: Where to send logs
+              default: "disabled"
               oneOf:
               - title: "OpenSearch (in cluster)"
                 const: "opensearch"
               - title: "Disabled"
                 const: "disabled"
           dependencies:
-            # TODO: do we need anything configurable about fluentbit? currently seems like no...
-            # collection:
-            #   oneOf:
-            #     - properties:
-            #         collection:
-            #           const: "fluentbit"
-            #         fluentbit:
-            #           type: object
-            #           title: fluentbit
-            #           required: []
-            #           properties: {}
-            #       required:
-            #         - fluentbit
-            #     - properties:
-            #         collection:
-            #           const: "Disabled"
             destination:
               oneOf:
                 - properties:
@@ -124,7 +110,7 @@ params:
                     - opensearch
                 - properties:
                     destination:
-                      const: "Disabled"
+                      const: "disabled"
     k8s_version:
       type: string
       title: Kubernetes Version
