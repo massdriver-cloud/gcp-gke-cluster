@@ -1,7 +1,7 @@
 schema: draft-07
 name: gcp-gke-cluster
 description: "GKE is a managed Kubernetes service in GCP that implements the full Kubernetes API, 4-way autoscaling, release channels and multi-cluster support."
-ref: github.com/massdriver-cloud/massdriver-bundles
+ref: github.com/massdriver-cloud/gcp-gke-cluster
 access: public
 type: bundle
 
@@ -28,12 +28,12 @@ params:
       node_groups:
         - name: big-pool-general
           machine_type:
-            - n2-standard-16
+            - e2-standard-16
           min_size: 1
           max_size: 20
         - name: big-pool-high-mem
           machine_type:
-            - n2-highmem-16
+            - e2-highmem-16
           min_size: 1
           max_size: 6
   required:
@@ -55,6 +55,7 @@ params:
         - "1.19"
         - "1.20"
         - "1.21"
+        - "1.22"
     cluster_configuration:
       type: object
       title: Cluster Configuration
@@ -136,24 +137,39 @@ params:
             type: string
             title: Machine type
             description: Machine type to use in the node group
-            enum:
-              - e2-micro
-              - e2-small
-              - e2-medium
-              - e2-standard-2
-              - e2-standard-4
-              - e2-standard-8
-              - e2-standard-16
-              - e2-standard-32
-              - e2-highmem-2
-              - e2-highmem-4
-              - e2-highmem-8
-              - e2-highmem-16
-              - e2-highcpu-2
-              - e2-highcpu-4
-              - e2-highcpu-8
-              - e2-highcpu-16
-              - e2-highcpu-32
+            oneOf:
+              - title: 'Shared-core: 2 vCPUs 2GB Memory'
+                const: e2-small
+              - title: 'Shared-core: 2 vCPUs 4GB Memory'
+                const: e2-medium
+              - title: 'General: 2 vCPUs 8GB Memory'
+                const: e2-standard-2
+              - title: 'General: 4 vCPUs 16GB Memory'
+                const: e2-standard-4
+              - title: 'General: 8 vCPUs 32GB Memory'
+                const: e2-standard-8
+              - title: 'General: 16 vCPUs 64GB Memory'
+                const: e2-standard-16
+              - title: 'General: 32 vCPUs 64GB Memory'
+                const: e2-standard-32
+              - title: 'Memory: 2 vCPUs 16GB Memory'
+                const: e2-highmem-2
+              - title: 'Memory: 4 vCPUs 32GB Memory'
+                const: e2-highmem-4
+              - title: 'Memory: 8 vCPUs 64GB Memory'
+                const: e2-highmem-8
+              - title: 'Memory: 16 vCPUs 128GB Memory'
+                const: e2-highmem-16
+              - title: 'CPU: 2 vCPUs 2GB Memory'
+                const: e2-highcpu-2
+              - title: 'CPU: 4 vCPUs 4GB Memory'
+                const: e2-highcpu-4
+              - title: 'CPU: 8 vCPUs 8GB Memory'
+                const: e2-highcpu-8
+              - title: 'CPU: 16 vCPUs 16GB Memory'
+                const: e2-highcpu-16
+              - title: 'CPU: 32 vCPUs 32GB Memory'
+                const: e2-highcpu-32
     core_services:
       type: object
       title: Core Services
