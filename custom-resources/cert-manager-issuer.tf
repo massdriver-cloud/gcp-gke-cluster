@@ -6,6 +6,11 @@ locals {
   ]
 }
 
+data "google_dns_managed_zone" "hosted_zones" {
+  for_each = toset(local.managed_zones)
+  name     = each.key
+}
+
 resource "kubernetes_manifest" "cluster_issuer" {
   count = local.enable_cert_manager ? 1 : 0
   manifest = {
@@ -24,7 +29,7 @@ resource "kubernetes_manifest" "cluster_issuer" {
         "solvers" = concat([for name in local.managed_zones : {
           "selector" = {
             "dnsZones" = [
-              name
+              data.google_dns_managed_zone.hosted_zones[name].dns_name
             ]
           },
           "dns01" = {
