@@ -15,7 +15,7 @@ module "kube-state-metrics" {
 
 module "opensearch" {
   count              = local.enable_opensearch ? 1 : 0
-  source             = "github.com/massdriver-cloud/terraform-modules//k8s-opensearch?ref=rip-out-tls"
+  source             = "github.com/massdriver-cloud/terraform-modules//k8s-opensearch?ref=5fc9525"
   md_metadata        = var.md_metadata
   release            = "opensearch"
   namespace          = local.o11y_namespace
