@@ -1,6 +1,6 @@
 locals {
   enable_opensearch = var.observability.logging.destination == "opensearch"
-  enable_fluentbit  = var.observability.logging.collection == "fluentbit"
+  enable_fluentbit  = local.enable_opensearch # we could add OR logic for other destinations that would require fluentbit
   o11y_namespace    = "md-observability"
 }
 
@@ -35,7 +35,7 @@ module "opensearch" {
 module "fluentbit" {
   count = local.enable_fluentbit ? 1 : 0
   # TODO replace ref with a SHA once k8s-fluentbit is merged
-  source             = "github.com/massdriver-cloud/terraform-modules//k8s-fluentbit?ref=k8s-fluentbit"
+  source             = "github.com/massdriver-cloud/terraform-modules//k8s-fluentbit?ref=f920d78"
   md_metadata        = var.md_metadata
   release            = "fluentbit"
   namespace          = local.o11y_namespace

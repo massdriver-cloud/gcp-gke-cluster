@@ -56,19 +56,8 @@ params:
           title: Logging
           description: Configure logging for your cluster
           required:
-            - collection
             - destination
           properties:
-            collection:
-              type: string
-              title: Log Collection
-              description: Stack for collecting logs
-              default: "disabled"
-              oneOf:
-                - title: "fluentbit"
-                  const: "fluentbit"
-                - title: "Disabled"
-                  const: "disabled"
             destination:
               type: string
               title: Destination
@@ -297,7 +286,8 @@ ui:
         ui:field: dnsZonesDropdown
         cloud: gcp
   observability:
-    opensearch:
-      persistence_size:
-        ui:field: conversionFieldData
-        default: Gibabytes
+    logging:
+      opensearch:
+        persistence_size:
+          ui:field: conversionFieldData
+          default: Gibabytes
