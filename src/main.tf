@@ -31,6 +31,12 @@ resource "google_container_cluster" "cluster" {
     labels = var.md_metadata.default_tags
     # Conditionally allow or deny requests based on the tag.
     tags = [local.cluster_network_tag]
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
+    shielded_instance_config {
+      enable_secure_boot = true
+    }
   }
 
   # IMAGE TYPE (configured in node pools below)
@@ -121,6 +127,11 @@ resource "google_container_cluster" "cluster" {
     ignore_changes = [node_pool, initial_node_count, resource_labels["asmv"], resource_labels["mesh_id"]]
   }
 
+  # CIS GKE V1.1 6.6.3
+  # pod_security_policy_config {
+  #   enabled = true
+  # }
+
   depends_on = [
     module.apis
   ]
@@ -152,6 +163,10 @@ resource "google_container_node_pool" "nodes" {
         "disable-legacy-endpoints" = true
       },
     )
+
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
 
     shielded_instance_config {
       enable_secure_boot          = true
