@@ -1,5 +1,7 @@
 locals {
-  latest_node_version = data.google_container_engine_versions.versions_in_region.latest_node_version
+  latest_master_version = data.google_container_engine_versions.versions_in_region.latest_master_version
+  latest_node_version   = data.google_container_engine_versions.versions_in_region.latest_node_version
+
   cluster_name        = var.md_metadata.name_prefix
   cluster_network_tag = "gke-${local.cluster_name}"
 }
@@ -17,10 +19,11 @@ data "google_container_engine_versions" "versions_in_region" {
 
 // https://github.com/terraform-google-modules/terraform-google-kubernetes-engine
 resource "google_container_cluster" "cluster" {
-  provider        = google-beta
-  name            = local.cluster_name
-  resource_labels = var.md_metadata.default_tags
-  location        = var.subnetwork.specs.gcp.region
+  provider           = google-beta
+  name               = local.cluster_name
+  resource_labels    = var.md_metadata.default_tags
+  location           = var.subnetwork.specs.gcp.region
+  min_master_version = local.latest_master_version
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -167,11 +170,13 @@ resource "google_container_node_pool" "nodes" {
 
   # UPGRADES, REPAIR, AND MAINTENANCE
   management {
-    auto_repair  = true
-    auto_upgrade = true
+    auto_repair = true
+    # this fights the node version if set to true
+    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool#version
+    auto_upgrade = false
   }
   upgrade_settings {
-    max_surge       = 1
+    max_surge       = 5
     max_unavailable = 0
   }
 
