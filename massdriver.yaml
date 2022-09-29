@@ -19,21 +19,18 @@ params:
       k8s_version: "1.21"
       node_groups:
         - name: small-pool
-          machine_type:
-            - e2-highcpu-2
+          machine_type: e2-highcpu-2
           min_size: 1
           max_size: 5
     - __name: Production
       k8s_version: "1.21"
       node_groups:
         - name: big-pool-general
-          machine_type:
-            - e2-standard-16
+          machine_type: e2-standard-16
           min_size: 1
           max_size: 20
         - name: big-pool-high-mem
-          machine_type:
-            - e2-highmem-16
+          machine_type: e2-highmem-16
           min_size: 1
           max_size: 6
   required:
