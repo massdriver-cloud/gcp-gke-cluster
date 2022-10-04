@@ -1,50 +1,53 @@
-# Operator Guide for "{type}"
-
-## TODO:
-
-* [ ] Write a design doc / operator guide
-* [ ] Write bundle code
-  * [ ] Defing params & connections JSON schema
-  * [ ] Write 2-3 Guided Configs
-  * [ ] Define artifact schema, design new artifact definitions if necessary
-  * [ ] Test each guided config
-  * [ ] View params schema in storybook, [write UI schema](https://react-jsonschema-form.readthedocs.io/en/latest/usage/widgets/) for sorting fields, etc
-* [ ] Write user guide
-* [ ] Remove this TODO block
-
-_Brief description of bundle from an operator's point of view_
+# Operator Guide for gcp-gke-cluster
+Kubernetes is the industry-standard open-source software for creating and managing containers. Given the widespread use of open-source software and containers, deploying Kubernetes effectively is vital.
 
 ## Use Cases
+The Kubernetes Control Plane is a completely managed service. When you set up a Google Kubernetes Engine (GKE) cluster, you can specify the node pools and instance types and  deploy your workloads quickly without worrying about the Control Plane.
+### Web applications
+Serve your web application out of Kubernetes, and leverage the high availability of running across availability zones and the ease of autoscaling your servers with web traffic.
+### Microservices
+Build large complex systems out of many small microservices, increasing your overall resiliency by isolating failure domains.
+### Workflows
+Gain the power of the open-source community by using services like Kubeflow and Argo Workflows for ETL (extract, transform, load) or machine-learning capabilities.
+### Cloud agnostic
+If your application can run on Kubernetes, you can run it on any cluster, whether it is Amazon Elastic Kubernetes (EKS), Google Kubernetes Engine (GKE), Microsoft Azure Kubernetes Service (AKS), or even your own on-premises cluster.
 
-_Common use cases for this bundle_
-
-### Guided Configs
-
-_Describe the guided configs_
+## Configuration Presets
+### Development 
+For development we use a small cost-optimized machine type with a low maximum number of nodes. Note that this configuration is not intended for a production environment.
+### Production 
+The production guided configuration comes with two node pools. One is meant for general workloads and features a more powerful machine type. The other uses high-memory machine types for workloads that are memory intensive. Use this preset for production environments.
 
 ## Design
+This bundle provisions a GKE cluster with one or many node pools and can optionally deploy cert-manager, external-dns, and nginx-ingress. The cluster is ready for production but configurable so that your development clusters are more cost-effective. Key capabilities of GKE include the following:
+### Control-Plane Management
+GKE manages the entire control plane for you, freeing you to focus just on the workers that run the containers.
+### Container Orchestration
+Within GKE, you can run any dockerized application. GKE gives you control over deployment strategies, VM type, and even stateful workloads, which you can manage with load balancing, high availability, and autoscaling. You can assign resources to each container to fit your needs precisely and isolate them with GKE Sandbox for extra security.
+### Autoscaling
+GKE can autoscale at both the pod and cluster level so that you can dynamically align your workloads with actual demand. Scale up during peak load times, and scale down when demand is low.
 
-### How It Works
+## Best Practices
+### Core Services
+Enable nginx-ingress, cert-manager and external-dns at the click of a button, allowing you to run secure, web accessible workloads without a second thought.
+### Regional Clusters
+We allow you to provision only regional GKE clusters, not zonal. With regional clusters, the pool nodes and the control plane are spread across zones in a region to mitigate the risk of zonal failure. As a result, you will have multiple control plane nodes, which ensures that the Kubernetes API stays up in the event of a zonal failure or cluster upgrade.
+### No Default Node Pool
+The default node pool will be deleted after the cluster comes up, and all nodes are managed via independent node-pool resources. This allows for easier configuration and upgrades of the cluster (both control-plane and worker nodes).
 
-_Describe how it works_
+## Security
+### Workload Identity
+The bundle enables Workload Identity to allow pods to authenticate via Google Cloud Platform (GCP) service accounts instead of via static credentials or node service account permissions
+### Node Service Account
+The bundle creates a custom service account for GKE nodes. The account has limited permissions for node-specific actions (such as pulling container images or sending logs to Stackdriver).
+### Private Cluster
+GCP offers a “private cluster,” which means two very different things. One, you can enable private nodes, which allocates private IPs for your node pools and prevents unwanted access from the public internet. And two, you can enable a private control plane, which would make the API inaccessible outside of your GCP project. We enable private nodes but not the private endpoint.
 
-#### Best Practices
+## Auditing
+All Kubernetes-powered clusters have Kubernetes audit logging, which keeps a chronological record of calls that have been made to the Kubernetes API server. Kubernetes audit-log entries are useful for investigating suspicious API requests, for collecting statistics, and for creating monitoring alerts for unwanted API calls.
 
-* Creates a custom service account for GKE nodes with limited permissions for node-specific actions (such as pulling container images or sending logs to Stackdriver)
-* Enables [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) to allow pods to authenticate via GCP service accounts instead of static credentials or node service account permissions
+## Observability
+By default, logging and monitoring are enabled on the cluster. Massdriver will monitor your workloads and send alerts when metrics are out of tolerance.
 
-#### Security
-
-#### Auditing
-
-#### Compliance
-
-#### Observability
-
-### Trade-offs
-
-_List trade offs made with this bundle_
-
-### Permissions
-
-_list IAM permissions required on this bundle._
+## Trade-Offs
+GKE offers some interesting features like node auto provisioning that we do not support. We will support more of these features in the future but only when we can harden them to Massdriver production standards.
