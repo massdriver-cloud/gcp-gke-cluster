@@ -29,7 +29,7 @@ resource "kubernetes_manifest" "cluster_issuer" {
         "solvers" = concat([for name in local.managed_zones : {
           "selector" = {
             "dnsZones" = [
-              data.google_dns_managed_zone.hosted_zones[name].dns_name
+              trimsuffix(data.google_dns_managed_zone.hosted_zones[name].dns_name, ".")
             ]
           },
           "dns01" = {
