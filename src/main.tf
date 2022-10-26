@@ -208,5 +208,7 @@ resource "google_container_node_pool" "nodes" {
   initial_node_count = 1
   lifecycle {
     ignore_changes = [initial_node_count]
+    # bring up new node pools before removing existing
+    create_before_destroy = true
   }
 }
