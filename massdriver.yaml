@@ -19,7 +19,7 @@ params:
       k8s_version: "1.21"
       node_groups:
         - name: small-pool
-          machine_type: e2-highcpu-2
+          machine_type: e2-standard-2
           min_size: 1
           max_size: 5
     - __name: Production
@@ -187,6 +187,7 @@ params:
             type: string
             title: Machine type
             description: Machine type to use in the node group
+            default: e2-standard-2
             oneOf:
               - title: 'Shared-core: 2 vCPUs 2GB Memory'
                 const: e2-small
