@@ -3,7 +3,7 @@ name: gcp-gke-cluster
 description: "GKE is a managed Kubernetes service in GCP that implements the full Kubernetes API, 4-way autoscaling, release channels and multi-cluster support."
 source_url: github.com/massdriver-cloud/gcp-gke-cluster
 access: public
-type: bundle
+type: infrastructure
 
 steps:
   - path: src
@@ -221,6 +221,13 @@ params:
                 const: e2-highcpu-16
               - title: 'CPU: 32 vCPUs 32GB Memory'
                 const: e2-highcpu-32
+              # TODO: move machine types to the backend
+              - title: 'GPU: 1 GPU 40GB Memory - NVIDIA A100 40GB'
+                const: a2-highgpu-1g
+              - title: 'GPU: 16 GPUs 640GB Memory - NVIDIA A100 40GB'
+                const: a2-megagpu-16g
+              - title: 'GPU: 1 GPU 80GB Memory - NVIDIA A100 80GB'
+                const: a2-ultragpu-1g
     core_services:
       type: object
       title: Core Services
