@@ -33,7 +33,6 @@ params:
           max_size: 6
   required:
     - k8s_version
-    - cluster_configuration
     - cluster_networking
     - node_groups
     - core_services
@@ -106,16 +105,6 @@ params:
         - "1.21"
         - "1.20"
         - "1.19"
-    cluster_configuration:
-      type: object
-      title: Cluster Configuration
-      description: "Configure the basic settings and capabilities of the cluster"
-      properties:
-        enable_binary_authorization:
-          type: boolean
-          title: Enable Binary Authorization
-          default: false
-          description: "WARNING: This can prevent container workloads from running! Binary Authorization is a deploy-time security control that ensures only trusted container images are deployed on Google Kubernetes Engine (GKE). More information here: https://cloud.google.com/binary-authorization"
     cluster_networking:
       type: object
       title: Cluster Networking
@@ -261,7 +250,6 @@ artifacts:
 ui:
   items:
     ui:order:
-      - cluster_configuration
       - cluster_networking
       - node_groups
       - core_services
