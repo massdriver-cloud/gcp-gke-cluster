@@ -56,8 +56,6 @@ Form input parameters for configuring a bundle for deployment.
 <!-- PARAMS:START -->
 ## Properties
 
-- **`cluster_configuration`** *(object)*: Configure the basic settings and capabilities of the cluster.
-  - **`enable_binary_authorization`** *(boolean)*: WARNING: This can prevent container workloads from running! Binary Authorization is a deploy-time security control that ensures only trusted container images are deployed on Google Kubernetes Engine (GKE). More information here: https://cloud.google.com/binary-authorization. Default: `False`.
 - **`cluster_networking`** *(object)*: Configure the network configuration of the cluster.
   - **`cluster_ipv4_cidr_block`** *(string)*: CIDR block to use for kubernetes pods. Set to /netmask (e.g. /16) to have a range chosen with a specific netmask. Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use. Default: `/16`.
   - **`master_ipv4_cidr_block`** *(string)*: CIDR block to use for kubernetes control plane. The mask for this must be exactly /28. Must be from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16), and should not conflict with other ranges in use. It is recommended to use consecutive /28 blocks from the 172.16.0.0/16 range for all your GKE clusters (172.16.0.0/28 for the first cluster, 172.16.0.16/28 for the second, etc.). Default: `172.16.0.0/28`.

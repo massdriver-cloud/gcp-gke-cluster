@@ -48,8 +48,7 @@ resource "google_container_cluster" "cluster" {
   workload_identity_config {
     workload_pool = "${var.gcp_authentication.data.project_id}.svc.id.goog"
   }
-  enable_shielded_nodes       = true
-  enable_binary_authorization = var.cluster_configuration.enable_binary_authorization
+  enable_shielded_nodes = true
   # dynamic "authenticator_groups_config" {
   #   for_each = local.cluster_authenticator_security_group
   #   content {
