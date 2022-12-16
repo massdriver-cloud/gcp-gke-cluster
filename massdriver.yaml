@@ -152,6 +152,7 @@ params:
           - machine_type
           - min_size
           - max_size
+          - is_spot
         properties:
           name:
             type: string
@@ -172,6 +173,11 @@ params:
             title: Maximum Size
             description: Maximum number of instances in the node group
             default: 10
+          is_spot:
+            type: boolean
+            title: Use Spot Instances
+            description: Spot instances are more affordable, but can be preempted at any time.
+            default: false
           machine_type:
             type: string
             title: Machine type
@@ -269,6 +275,7 @@ ui:
         - machine_type
         - min_size
         - max_size
+        - is_spot
         - "*"
   core_services:
     ui:order:

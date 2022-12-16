@@ -77,6 +77,7 @@ Form input parameters for configuring a bundle for deployment.
 - **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.23', '1.22', '1.21', '1.20', '1.19']`. Default: `1.22`.
 - **`node_groups`** *(array)*
   - **Items** *(object)*: Definition of a node group.
+    - **`is_spot`** *(boolean)*: Spot instances are more affordable, but can be preempted at any time. Default: `False`.
     - **`machine_type`** *(string)*: Machine type to use in the node group. Default: `e2-standard-2`.
       - **One of**
         - Shared-core: 2 vCPUs 2GB Memory
