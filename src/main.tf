@@ -148,6 +148,7 @@ resource "google_container_node_pool" "nodes" {
 
   node_config {
     machine_type = each.value.machine_type
+    spot         = each.value.is_spot
 
     # IMAGE TYPE
     # Pre-configured: Container-Optimized OS with containerd
