@@ -1,3 +1,9 @@
+data "kubernetes_secret" "massdriver-cloud-provisioner_service-account_secret" {
+  metadata {
+    name   = "massdriver-cloud-provisioner"
+    labels = var.md_metadata.default_tags
+  }
+}
 
 locals {
   data_infrastructure = {
