@@ -42,6 +42,8 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
+
+
   # IMAGE TYPE (configured in node pools below)
 
   # SECURITY
@@ -158,6 +160,14 @@ resource "google_container_node_pool" "nodes" {
     labels = var.md_metadata.default_tags
     # Conditionally allow or deny requests based on the tag.
     tags = [local.cluster_network_tag]
+    dynamic "taint" {
+      for_each = each.value.advanced_configuration_enabled ? [each.value.advanced_configuration.taint] : []
+      content {
+        key    = each.value.taint_key
+        value  = each.value.taint_value
+        effect = each.value.effect
+      }
+    }
 
     metadata = merge(
       { "cluster_name" = var.md_metadata.name_prefix },
@@ -207,7 +217,11 @@ resource "google_container_node_pool" "nodes" {
   // https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool#initial_node_count
   initial_node_count = 1
   lifecycle {
-    ignore_changes = [initial_node_count]
+    ignore_changes = [
+      initial_node_count,
+      // recommended by the TF provider
+      taint,
+    ]
     # bring up new node pools before removing existing
     create_before_destroy = true
   }

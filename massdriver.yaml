@@ -140,24 +140,23 @@ params:
           $md.immutable: true
     node_groups:
       type: array
-      title: Node Groups
-      descrition: Node groups to provision
+      title: Node Pools
       minItems: 1
       items:
         type: object
-        title: Node Group
-        description: Definition of a node group
+        title: Node Pool
         required:
           - name
           - machine_type
           - min_size
           - max_size
           - is_spot
+          - advanced_config_enabled
         properties:
           name:
             type: string
-            title: Node Group Name
-            description: The name of the node group
+            title: Name
+            description: The name of the node pool
             # https://cloud.google.com/compute/docs/naming-resources#resource-name-format
             pattern: "[a-z]([-a-z0-9]*[a-z0-9])?"
             minLength: 1
@@ -166,12 +165,12 @@ params:
           min_size:
             type: number
             title: Minimum Size
-            description: Minimum number of instances in the node group
+            description: Minimum number of instances in the node pool
             default: 1
           max_size:
             type: number
             title: Maximum Size
-            description: Maximum number of instances in the node group
+            description: Maximum number of instances in the node pool
             default: 10
           is_spot:
             type: boolean
@@ -223,6 +222,27 @@ params:
                 const: a2-megagpu-16g
               - title: 'GPU: 1 GPU 80GB Memory - NVIDIA A100 80GB'
                 const: a2-ultragpu-1g
+          advanced_configuration_enabled:
+            type: boolean
+            title: Advanced Configuration Enabled
+            default: false
+        dependencies:
+          advanced_configuration_enabled:
+            oneOf:
+              - properties:
+                  advanced_configuration_enabled:
+                    const: false
+              - properties:
+                  advanced_configuration_enabled:
+                    const: true
+                  advanced_configuration:
+                    type: object
+                    title: Advanced Configuration
+                    properties:
+                      taint:
+                        $ref: https://raw.githubusercontent.com/massdriver-cloud/artifact-definitions/main/definitions/types/k8s-node-taint.json
+                        $md.immutable: true
+
     core_services:
       type: object
       title: Core Services

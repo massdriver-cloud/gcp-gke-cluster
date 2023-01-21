@@ -76,7 +76,13 @@ Form input parameters for configuring a bundle for deployment.
   - **`enable_ingress`** *(boolean)*: Enabling this will create an nginx ingress controller in the cluster, allowing internet traffic to flow into web accessible services within the cluster. Default: `False`.
 - **`k8s_version`** *(string)*: The version of Kubernetes to run. Must be one of: `['1.23', '1.22', '1.21', '1.20', '1.19']`. Default: `1.22`.
 - **`node_groups`** *(array)*
-  - **Items** *(object)*: Definition of a node group.
+  - **Items** *(object)*
+    - **`advanced_config_enabled`** *(boolean)*: Default: `False`.
+    - **`effect`** *(string)*: Default: `{'const': 'NO_SCHEDULE'}`.
+      - **One of**
+        - PreferNoSchedule
+        - NoSchedule
+        - NoExecute
     - **`is_spot`** *(boolean)*: Spot instances are more affordable, but can be preempted at any time. Default: `False`.
     - **`machine_type`** *(string)*: Machine type to use in the node group. Default: `e2-standard-2`.
       - **One of**
@@ -99,9 +105,9 @@ Form input parameters for configuring a bundle for deployment.
         - GPU: 1 GPU 40GB Memory - NVIDIA A100 40GB
         - GPU: 16 GPUs 640GB Memory - NVIDIA A100 40GB
         - GPU: 1 GPU 80GB Memory - NVIDIA A100 80GB
-    - **`max_size`** *(number)*: Maximum number of instances in the node group. Default: `10`.
-    - **`min_size`** *(number)*: Minimum number of instances in the node group. Default: `1`.
-    - **`name`** *(string)*: The name of the node group. Default: ``.
+    - **`max_size`** *(number)*: Maximum number of instances in the node pool. Default: `10`.
+    - **`min_size`** *(number)*: Minimum number of instances in the node pool. Default: `1`.
+    - **`name`** *(string)*: The name of the node pool. Default: ``.
 - **`observability`** *(object)*: Configure logging and metrics collection and delivery for your entire cluster.
   - **`logging`** *(object)*: Configure logging for your cluster.
     - **`destination`** *(string)*: Where to send logs. Default: `disabled`.
@@ -430,7 +436,7 @@ Resources created by this bundle that can be connected to other bundles.
             "https://massdriver.cloud"
             ```
 
-        - Azure Infrastructure Resource ID*object*: Minimal Azure Infrastructure Config. Cannot contain additional properties.
+        - Infrastructure Config*object*: Azure AKS Infrastructure Configuration. Cannot contain additional properties.
           - **`ari`** *(string)*: Azure Resource ID.
 
             Examples:
@@ -438,6 +444,7 @@ Resources created by this bundle that can be connected to other bundles.
             "/subscriptions/12345678-1234-1234-abcd-1234567890ab/resourceGroups/resource-group-name/providers/Microsoft.Network/virtualNetworks/network-name"
             ```
 
+          - **`oidc_issuer_url`** *(string)*
         - GCP Infrastructure GRN*object*: Minimal GCP Infrastructure Config. Cannot contain additional properties.
           - **`grn`** *(string)*: GCP Resource Name (GRN).
 
