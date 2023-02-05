@@ -27,10 +27,6 @@ params:
           machine_type: e2-standard-16
           min_size: 1
           max_size: 20
-        - name: big-pool-high-mem
-          machine_type: e2-highmem-16
-          min_size: 1
-          max_size: 6
   required:
     - k8s_version
     - cluster_networking
