@@ -6,7 +6,6 @@ locals {
     for zone in local.managed_zones :
     zone => data.google_dns_managed_zone.hosted_zones[zone].dns_name
   }
-  core_services_namespace = "md-core-services"
 
   managed_zones = [for zone in var.core_services.cloud_dns_managed_zones :
     length(split("/", zone)) > 1 ? split("/", zone)[3] : zone
@@ -18,13 +17,20 @@ data "google_dns_managed_zone" "hosted_zones" {
   name     = each.key
 }
 
+resource "kubernetes_namespace_v1" "md-core-services" {
+  metadata {
+    labels = var.md_metadata.default_tags
+    name   = "md-core-services"
+  }
+}
+
 module "ingress_nginx" {
   source             = "github.com/massdriver-cloud/terraform-modules//k8s-ingress-nginx?ref=c336d59"
   count              = var.core_services.enable_ingress ? 1 : 0
   kubernetes_cluster = local.kubernetes_cluster_artifact
   md_metadata        = var.md_metadata
   release            = "ingress-nginx"
-  namespace          = local.core_services_namespace
+  namespace          = kubernetes_namespace_v1.md-core-services.metadata.0.name
 }
 
 module "external_dns" {
@@ -33,7 +39,7 @@ module "external_dns" {
   kubernetes_cluster      = local.kubernetes_cluster_artifact
   md_metadata             = var.md_metadata
   release                 = "external-dns"
-  namespace               = local.core_services_namespace
+  namespace               = kubernetes_namespace_v1.md-core-services.metadata.0.name
   cloud_dns_managed_zones = local.cloud_dns_managed_zones_to_domain_map
   gcp_project_id          = var.gcp_authentication.data.project_id
 }
@@ -44,6 +50,6 @@ module "cert_manager" {
   kubernetes_cluster = local.kubernetes_cluster_artifact
   md_metadata        = var.md_metadata
   release            = "cert-manager"
-  namespace          = local.core_services_namespace
+  namespace          = kubernetes_namespace_v1.md-core-services.metadata.0.name
   gcp_project_id     = var.gcp_authentication.data.project_id
 }
