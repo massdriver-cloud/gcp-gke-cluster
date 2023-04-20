@@ -27,6 +27,20 @@ params:
           machine_type: e2-standard-16
           min_size: 1
           max_size: 20
+    - __name: Wizard
+      k8s_version: "1.23"
+      cluster_networking:
+        cluster_ipv4_cidr_block: /16
+        services_ipv4_cidr_block: /20
+        master_ipv4_cidr_block: "172.16.0.0/28"
+      node_groups:
+        - name: wizard
+          min_size: 1
+          max_size: 5
+          is_spot: false
+          machine_type: e2-small
+      core_services:
+        enable_ingress: true
   required:
     - k8s_version
     - cluster_networking
@@ -80,7 +94,7 @@ params:
     node_groups:
       type: array
       title: Node Groups
-      descrition: Node groups to provision
+      description: Node groups to provision
       minItems: 1
       items:
         type: object
@@ -98,10 +112,11 @@ params:
             title: Node Group Name
             description: The name of the node group
             # https://cloud.google.com/compute/docs/naming-resources#resource-name-format
-            pattern: "[a-z]([-a-z0-9]*[a-z0-9])?"
+            pattern: ^[a-z]([-a-z0-9]*[a-z0-9])?$
+            message:
+              pattern: Must be a valid name. Must start with a lowercase letter, and can only contain lowercase letters, numbers, and hyphens. Must end with a number or a letter.
             minLength: 1
             maxLength: 40
-            default: ""
           min_size:
             type: number
             title: Minimum Size

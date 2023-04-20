@@ -121,3 +121,6 @@ schema-ui.json
 # Massdriver ignore files
 # terraform lock files
 .terraform.lock.hcl
+
+# VSCode extensions
+*infracost
