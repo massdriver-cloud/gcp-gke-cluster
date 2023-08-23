@@ -28,7 +28,6 @@ params:
           min_size: 1
           max_size: 20
     - __name: Wizard
-      k8s_version: "1.23"
       cluster_networking:
         cluster_ipv4_cidr_block: /16
         services_ipv4_cidr_block: /20
@@ -42,22 +41,10 @@ params:
       core_services:
         enable_ingress: true
   required:
-    - k8s_version
     - cluster_networking
     - node_groups
     - core_services
   properties:
-    k8s_version:
-      type: string
-      title: Kubernetes Version
-      description: The version of Kubernetes to run
-      default: "1.22"
-      enum:
-        - "1.23"
-        - "1.22"
-        - "1.21"
-        - "1.20"
-        - "1.19"
     cluster_networking:
       type: object
       title: Cluster Networking

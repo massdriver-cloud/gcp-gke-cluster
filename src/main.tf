@@ -1,20 +1,6 @@
 locals {
-  latest_master_version = data.google_container_engine_versions.versions_in_region.latest_master_version
-  latest_node_version   = data.google_container_engine_versions.versions_in_region.latest_node_version
-
   cluster_name        = var.md_metadata.name_prefix
   cluster_network_tag = "gke-${local.cluster_name}"
-}
-
-# This gives us the latest version available in the current region
-# that matches the version prefix: [1.21., 1.22., etc..]
-data "google_container_engine_versions" "versions_in_region" {
-  provider       = google-beta
-  location       = var.subnetwork.specs.gcp.region
-  version_prefix = "${var.k8s_version}."
-  depends_on = [
-    module.apis
-  ]
 }
 
 // https://github.com/terraform-google-modules/terraform-google-kubernetes-engine
@@ -23,7 +9,10 @@ resource "google_container_cluster" "cluster" {
   name               = local.cluster_name
   resource_labels    = var.md_metadata.default_tags
   location           = var.subnetwork.specs.gcp.region
-  min_master_version = local.latest_master_version
+
+  release_channel {
+    channel = "STABLE"
+  }
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -97,16 +86,12 @@ resource "google_container_cluster" "cluster" {
   # The GKE components exposing logs.
   # https://cloud.google.com/stackdriver/docs/solutions/gke/installing#available-metrics
   monitoring_config {
-    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+    enable_components = ["SYSTEM_COMPONENTS"]
   }
   # https://github.com/hashicorp/terraform-provider-google/issues/10820
   # mutually exclustive with *_service above
   # cluster_telemetry {
   #   type = "ENABLED"
-  # }
-
-  # monitoring_config {
-  #   enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
   # }
 
   # CLUSTER ADD-ONS
@@ -144,7 +129,6 @@ resource "google_container_node_pool" "nodes" {
   for_each = { for ng in var.node_groups : ng.name => ng }
   name     = each.value.name
   cluster  = google_container_cluster.cluster.id
-  version  = local.latest_node_version
 
   node_config {
     machine_type = each.value.machine_type
@@ -185,10 +169,8 @@ resource "google_container_node_pool" "nodes" {
 
   # UPGRADES, REPAIR, AND MAINTENANCE
   management {
-    auto_repair = true
-    # this fights the node version if set to true
-    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool#version
-    auto_upgrade = false
+    auto_repair  = true
+    auto_upgrade = true
   }
   upgrade_settings {
     max_surge       = 5
