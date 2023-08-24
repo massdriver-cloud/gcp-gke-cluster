@@ -19,19 +19,6 @@ resource "google_container_cluster" "cluster" {
   # node pool and immediately delete it.
   remove_default_node_pool = true
   initial_node_count       = 1
-  node_config {
-    labels = var.md_metadata.default_tags
-    # Conditionally allow or deny requests based on the tag.
-    tags = [local.cluster_network_tag]
-    workload_metadata_config {
-      mode = "GKE_METADATA"
-    }
-    shielded_instance_config {
-      enable_secure_boot = true
-    }
-  }
-
-  # IMAGE TYPE (configured in node pools below)
 
   # SECURITY
   workload_identity_config {
