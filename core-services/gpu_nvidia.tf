@@ -1,7 +1,7 @@
 locals {
   machine_types = join("", var.node_groups[*].machine_type)
   # https://cloud.google.com/compute/docs/gpus#a100-gpus
-  install_nvidia_driver = length(regexall("-highgpu-|-megagpu-|-ultragpu-", local.machine_types)) > 0
+  install_nvidia_driver = length(regexall("-highgpu-|-megagpu-|-ultragpu-|g2-standard", local.machine_types)) > 0
 }
 
 # These drivers are required for the above machine types.
