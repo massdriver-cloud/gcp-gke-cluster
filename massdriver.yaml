@@ -164,9 +164,9 @@ params:
                 const: a2-megagpu-16g
               - title: 'GPU: 1 GPU 80GB Memory - NVIDIA A100 80GB'
                 const: a2-ultragpu-1g
-              - title: 'GPU: 1 GPU 24GB Memory - NVIDIA L40'
+              - title: 'GPU: 1 GPU 24GB Memory - NVIDIA L4'
                 const: g2-standard-4
-              - title: 'GPU: 2 GPU 48GB Memory - NVIDIA L40'
+              - title: 'GPU: 2 GPU 48GB Memory - NVIDIA L4'
                 const: g2-standard-24
     core_services:
       type: object
