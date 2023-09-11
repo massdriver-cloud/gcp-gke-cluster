@@ -18,13 +18,3 @@ module "application_alarms" {
 
   depends_on = [module.prometheus-observability]
 }
-
-module "cluster_autoscaler_max_scale" {
-  count                 = true ? 1 : 0
-  source                = "github.com/massdriver-cloud/terraform-modules//k8s/prometheus-alarm?ref=41e799c"
-  md_metadata           = var.md_metadata
-  display_name          = "Cluster Autoscaler Max Scale"
-  prometheus_alert_name = "ClusterAutoscalerUnschedulablePods"
-
-  depends_on = [module.prometheus-observability]
-}
