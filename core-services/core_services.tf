@@ -31,6 +31,16 @@ module "ingress_nginx" {
   md_metadata        = var.md_metadata
   release            = "ingress-nginx"
   namespace          = kubernetes_namespace_v1.md-core-services.metadata.0.name
+  helm_additional_values = {
+    metrics = {
+      enabled = true
+      serviceMonitor = {
+        enabled = true
+      }
+    }
+  }
+
+  depends_on = [module.prometheus-observability]
 }
 
 module "external_dns" {
@@ -42,6 +52,8 @@ module "external_dns" {
   namespace               = kubernetes_namespace_v1.md-core-services.metadata.0.name
   cloud_dns_managed_zones = local.cloud_dns_managed_zones_to_domain_map
   gcp_project_id          = var.gcp_authentication.data.project_id
+
+  depends_on = [module.prometheus-observability]
 }
 
 module "cert_manager" {
@@ -52,4 +64,6 @@ module "cert_manager" {
   release            = "cert-manager"
   namespace          = kubernetes_namespace_v1.md-core-services.metadata.0.name
   gcp_project_id     = var.gcp_authentication.data.project_id
+
+  depends_on = [module.prometheus-observability]
 }
