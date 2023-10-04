@@ -1,4 +1,3 @@
-
 resource "kubernetes_namespace_v1" "md-observability" {
   metadata {
     labels = var.md_metadata.default_tags
