@@ -12,6 +12,26 @@ Google Kubernetes Engine (GKE) is a managed, production-ready environment for de
 6. **Security**: Shielded nodes are enabled for enhanced protection against rootkits and bootkits.
 7. **Custom Service Accounts**: Node pools are configured to use custom service accounts with specific IAM roles for enhanced security.
 
+### Install Kubectl
+
+You will first need to install `kubectl` to interact with the kubernetes cluster. Installation instructions for Windows, Mac and Linux can be found [here](https://kubernetes.io/docs/tasks/tools/#kubectl).
+
+Note: While `kubectl` generally has forwards and backwards compatibility of core capabilities, it is best if your `kubectl` client version is matched with your kubernetes cluster version. This ensures the best stability and compability for your client.
+
+The standard way to manage connection and authentication details for kubernetes clusters is through a configuration file called a [`kubeconfig`](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file.
+
+### Download the Kubeconfig File
+
+The standard way to manage connection and authentication details for kubernetes clusters is through a configuration file called a [`kubeconfig`](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/) file. The `kubernetes-cluster` artifact that is created when you make a kubernetes cluster in Massdriver contains the basic information needed to create a `kubeconfig` file. Because of this, Massdriver makes it very easy for you to download a `kubeconfig` file that will allow you to use `kubectl` to query and administer your cluster.
+
+For more information on downloading your `kubeconfig` file, [check out our documentation](https://docs.massdriver.cloud/runbooks/kubernetes/access#downloading-your-kubeconfig-file).
+
+### Use the Kubeconfig File
+
+Once the `kubeconfig` file is downloaded, you can move it to your desired location. By default, `kubectl` will look for a file named `config` located in the `$HOME/.kube` directory. If you would like this to be your default configuration, you can rename and move the file to `$HOME/.kube/config`.
+
+A single `kubeconfig` file can hold multiple cluster configurations, and you can select your desired cluster through the use of [`contexts`](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#context). Alternatively, you can have multiple `kubeconfig` files and select your desired file through the `KUBECONFIG` environment variable or the `--kubeconfig` flag in `kubectl`.
+
 ### Runbook
 
 #### Unable to Connect to GKE Cluster
@@ -105,4 +125,3 @@ kubectl logs <pod-name> -n <namespace> --previous
 ```
 
 Assess the logs and container status to determine the cause of the crashes.
-

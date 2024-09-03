@@ -17,7 +17,7 @@ GKE is a managed Kubernetes service in GCP that implements the full Kubernetes A
 
 ## Design
 
-For detailed information, check out our [Operator Guide](operator.mdx) for this bundle.
+For detailed information, check out our [Operator Guide](operator.md) for this bundle.
 
 ## Usage
 
