@@ -25,7 +25,7 @@ resource "kubernetes_namespace_v1" "md-core-services" {
 }
 
 module "ingress_nginx" {
-  source             = "github.com/massdriver-cloud/terraform-modules//k8s-ingress-nginx?ref=41e799c"
+  source             = "github.com/massdriver-cloud/terraform-modules//k8s-ingress-nginx?ref=42d293b"
   count              = var.core_services.enable_ingress ? 1 : 0
   kubernetes_cluster = local.kubernetes_cluster_artifact
   md_metadata        = var.md_metadata
@@ -44,7 +44,7 @@ module "ingress_nginx" {
 }
 
 module "external_dns" {
-  source                  = "github.com/massdriver-cloud/terraform-modules//k8s-external-dns-gcp?ref=41e799c"
+  source                  = "github.com/massdriver-cloud/terraform-modules//k8s-external-dns-gcp?ref=42d293b"
   count                   = local.enable_external_dns ? 1 : 0
   kubernetes_cluster      = local.kubernetes_cluster_artifact
   md_metadata             = var.md_metadata
@@ -57,7 +57,7 @@ module "external_dns" {
 }
 
 module "cert_manager" {
-  source             = "github.com/massdriver-cloud/terraform-modules//k8s-cert-manager-gcp?ref=41e799c"
+  source             = "github.com/massdriver-cloud/terraform-modules//k8s-cert-manager-gcp?ref=42d293b"
   count              = local.enable_cert_manager ? 1 : 0
   kubernetes_cluster = local.kubernetes_cluster_artifact
   md_metadata        = var.md_metadata
