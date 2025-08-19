@@ -3,7 +3,6 @@ name: gcp-gke-cluster
 version: 1.0.0
 description: GKE is a managed Kubernetes service in GCP that implements the full Kubernetes API, 4-way autoscaling, release channels and multi-cluster support.
 source_url: https://github.com/massdriver-cloud/gcp-gke-cluster
-type: application
 steps:
 - path: src
   provisioner: opentofu
