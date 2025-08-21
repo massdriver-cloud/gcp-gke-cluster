@@ -33,8 +33,7 @@ locals {
 }
 
 resource "massdriver_artifact" "kubernetes_cluster" {
-  field                = "kubernetes_cluster"
-  provider_resource_id = data.google_container_cluster.cluster.id
-  name                 = "GKE Cluster Credentials ${var.md_metadata.name_prefix} [${var.subnetwork.specs.gcp.region}]"
-  artifact             = jsonencode(local.kubernetes_cluster_artifact)
+  field    = "kubernetes_cluster"
+  name     = "GKE Cluster Credentials ${var.md_metadata.name_prefix} [${var.subnetwork.specs.gcp.region}]"
+  artifact = jsonencode(local.kubernetes_cluster_artifact)
 }
