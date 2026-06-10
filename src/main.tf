@@ -5,10 +5,13 @@ locals {
 
 // https://github.com/terraform-google-modules/terraform-google-kubernetes-engine
 resource "google_container_cluster" "cluster" {
-  provider           = google-beta
-  name               = local.cluster_name
-  resource_labels    = var.md_metadata.default_tags
-  location           = var.subnetwork.specs.gcp.region
+  name            = local.cluster_name
+  resource_labels = var.md_metadata.default_tags
+  location        = var.subnetwork.specs.gcp.region
+
+  # Massdriver manages the full cluster lifecycle, including decommissioning.
+  # The google provider defaults this to true (v5+), which blocks `terraform destroy`.
+  deletion_protection = false
 
   release_channel {
     channel = "STABLE"
@@ -22,15 +25,9 @@ resource "google_container_cluster" "cluster" {
 
   # SECURITY
   workload_identity_config {
-    workload_pool = "${var.gcp_authentication.data.project_id}.svc.id.goog"
+    workload_pool = "${var.gcp_authentication.project_id}.svc.id.goog"
   }
   enable_shielded_nodes = true
-  # dynamic "authenticator_groups_config" {
-  #   for_each = local.cluster_authenticator_security_group
-  #   content {
-  #     security_group = authenticator_groups_config.value.security_group
-  #   }
-  # }
 
   # NETWORKING
   network                     = var.subnetwork.data.infrastructure.gcp_global_network_grn
@@ -84,7 +81,7 @@ resource "google_container_cluster" "cluster" {
   # CLUSTER ADD-ONS
   addons_config {
     horizontal_pod_autoscaling {
-      disabled = true
+      disabled = false
     }
     http_load_balancing {
       disabled = false
@@ -106,16 +103,27 @@ resource "google_container_cluster" "cluster" {
   #   enabled = true
   # }
 
+  # container.googleapis.com must be enabled before the cluster is created.
   depends_on = [
-    module.apis
+    google_project_service.main,
+    google_service_account.nodes
   ]
 }
 
 resource "google_container_node_pool" "nodes" {
-  provider = google-beta
   for_each = { for ng in var.node_groups : ng.name => ng }
   name     = each.value.name
   cluster  = google_container_cluster.cluster.id
+
+  depends_on = [
+    google_service_account.nodes,
+    google_project_iam_member.nodes_service_account-log_writer,
+    google_project_iam_member.nodes_service_account-metric_writer,
+    google_project_iam_member.nodes_service_account-monitoring_viewer,
+    google_project_iam_member.nodes_service_account-resourceMetadata-writer,
+    google_project_iam_member.nodes_service_account-gcr,
+    google_project_iam_member.nodes_service_account-artifact-registry
+  ]
 
   node_config {
     machine_type = each.value.machine_type
@@ -124,6 +132,13 @@ resource "google_container_node_pool" "nodes" {
     # IMAGE TYPE
     # Pre-configured: Container-Optimized OS with containerd
     image_type = "COS_CONTAINERD"
+
+    # IMAGE STREAMING
+    # Stream container images from Artifact Registry so pods can start before the
+    # full image is pulled. Significantly faster cold starts for large images.
+    gcfs_config {
+      enabled = true
+    }
     # https://cloud.google.com/kubernetes-engine/docs/how-to/tags?authuser=2&_ga=2.262509772.-1752412165.1643829903#overview
     # Organize GKE resources to track usage and billing.
     labels = var.md_metadata.default_tags
@@ -176,7 +191,11 @@ resource "google_container_node_pool" "nodes" {
   // https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool#initial_node_count
   initial_node_count = 1
   lifecycle {
-    ignore_changes = [initial_node_count]
+    ignore_changes = [
+      initial_node_count,
+      node_config[0].resource_labels,
+      node_config[0].kubelet_config
+    ]
     # bring up new node pools before removing existing
     create_before_destroy = true
   }

@@ -1,15 +1,15 @@
 schema: draft-07
 name: gcp-gke-cluster
-version: 1.0.0
+version: 2.0.0
 description: GKE is a managed Kubernetes service in GCP that implements the full Kubernetes API, 4-way autoscaling, release channels and multi-cluster support.
 source_url: https://github.com/massdriver-cloud/gcp-gke-cluster
+
 steps:
 - path: src
   provisioner: opentofu
 - path: core-services
   provisioner: opentofu
-- path: custom-resources
-  provisioner: opentofu
+
 params:
   examples:
   - __name: Development
@@ -35,12 +35,9 @@ params:
       max_size: 5
       is_spot: false
       machine_type: e2-small
-    core_services:
-      enable_ingress: true
   required:
   - cluster_networking
   - node_groups
-  - core_services
   properties:
     cluster_networking:
       type: object
@@ -133,7 +130,7 @@ params:
               const: e2-standard-8
             - title: 'General: 16 vCPUs 64GB Memory'
               const: e2-standard-16
-            - title: 'General: 32 vCPUs 64GB Memory'
+            - title: 'General: 32 vCPUs 128GB Memory'
               const: e2-standard-32
             - title: 'Memory: 2 vCPUs 16GB Memory'
               const: e2-highmem-2
@@ -153,56 +150,29 @@ params:
               const: e2-highcpu-16
             - title: 'CPU: 32 vCPUs 32GB Memory'
               const: e2-highcpu-32
-            - title: 'GPU: 1 GPU 40GB Memory - NVIDIA A100 40GB'
-              const: a2-highgpu-1g
-            - title: 'GPU: 16 GPUs 640GB Memory - NVIDIA A100 40GB'
-              const: a2-megagpu-16g
-            - title: 'GPU: 1 GPU 80GB Memory - NVIDIA A100 80GB'
-              const: a2-ultragpu-1g
-            - title: 'GPU: 1 GPU 24GB Memory - NVIDIA L4'
-              const: g2-standard-4
-            - title: 'GPU: 2 GPU 48GB Memory - NVIDIA L4'
-              const: g2-standard-24
-    core_services:
-      type: object
-      title: Core Services
-      description: Configure core services in Kubernetes for Massdriver to manage
-      required: []
-      properties:
-        enable_ingress:
-          type: boolean
-          title: Enable Ingress
-          description: Enabling this will create an nginx ingress controller in the cluster, allowing internet traffic to flow into web accessible services within the cluster
-          default: false
-        cloud_dns_managed_zones:
-          type: array
-          title: Cloud DNS Managed Zones
-          description: Select any Cloud DNS Managed Zones associated with this cluster to allow the cluster to automatically manage DNS records and SSL certificates
-          default: []
-          items:
-            type: string
-            title: Managed Zone
+
 connections:
   required:
   - gcp_authentication
   - subnetwork
   properties:
     gcp_authentication:
-      "$ref": massdriver/gcp-service-account
+      "$ref": gcp-service-account
     subnetwork:
-      "$ref": massdriver/gcp-subnetwork
+      "$ref": gcp-subnetwork
+
 artifacts:
   required:
   - kubernetes_cluster
   properties:
     kubernetes_cluster:
-      "$ref": massdriver/kubernetes-cluster
+      "$ref": kubernetes-cluster
+
 ui:
   items:
     ui:order:
     - cluster_networking
     - node_groups
-    - core_services
     - "*"
   node_groups:
     items:
@@ -213,11 +183,3 @@ ui:
       - max_size
       - is_spot
       - "*"
-  core_services:
-    ui:order:
-    - enable_ingress
-    - cloud_dns_managed_zones
-    cloud_dns_managed_zones:
-      items:
-        ui:field: dnsZonesDropdown
-        cloud: gcp

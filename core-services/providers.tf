@@ -3,9 +3,13 @@
 terraform {
   required_version = ">= 1.0"
   required_providers {
+    massdriver = {
+      source  = "massdriver-cloud/massdriver"
+      version = "~> 1.1"
+    }
     google = {
       source  = "hashicorp/google"
-      version = "~> 4.0"
+      version = "~> 6.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -22,8 +26,8 @@ data "google_container_cluster" "cluster" {
 }
 
 provider "google" {
-  project     = var.gcp_authentication.data.project_id
-  credentials = jsonencode(var.gcp_authentication.data)
+  project     = var.gcp_authentication.project_id
+  credentials = jsonencode(var.gcp_authentication)
   region      = var.subnetwork.specs.gcp.region
 }
 
