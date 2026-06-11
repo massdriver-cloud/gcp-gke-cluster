@@ -9,7 +9,7 @@ resource "google_compute_firewall" "control_plane_ingress" {
   name        = "${var.md_metadata.name_prefix}-webhook"
   description = "Allow GKE control plane to hit pods for admission controllers/webhooks"
   project     = var.gcp_authentication.project_id
-  network     = var.subnetwork.data.infrastructure.gcp_global_network_grn
+  network     = var.subnetwork.infrastructure.gcp_global_network_grn
   priority    = 1000
   direction   = "INGRESS"
 

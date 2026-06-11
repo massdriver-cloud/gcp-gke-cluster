@@ -203,99 +203,98 @@ Connections from other bundles that this bundle depends on.
 
   - **`type`** *(string)*: The type of credential. Should be 'service_account' for service account keys. Default: `service_account`.
 - **`subnetwork`** *(object)*: A region-bound network for deploying GCP resources. Cannot contain additional properties.
-  - **`data`** *(object)*: Cannot contain additional properties.
-    - **`infrastructure`** *(object)*: Cannot contain additional properties.
-      - **`cidr`** *(string)*
+  - **`infrastructure`** *(object)*: Cannot contain additional properties.
+    - **`cidr`** *(string)*
 
-        Examples:
-        ```json
-        "10.100.0.0/16"
-        ```
+      Examples:
+      ```json
+      "10.100.0.0/16"
+      ```
 
-        ```json
-        "192.24.12.0/22"
-        ```
+      ```json
+      "192.24.12.0/22"
+      ```
 
-      - **`gcp_global_network_grn`** *(string)*: GCP Resource Name (GRN).
+    - **`gcp_global_network_grn`** *(string)*: GCP Resource Name (GRN).
 
-        Examples:
-        ```json
-        "projects/my-project/global/networks/my-global-network"
-        ```
+      Examples:
+      ```json
+      "projects/my-project/global/networks/my-global-network"
+      ```
 
-        ```json
-        "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
-        ```
+      ```json
+      "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
+      ```
 
-        ```json
-        "projects/my-project/topics/my-pubsub-topic"
-        ```
+      ```json
+      "projects/my-project/topics/my-pubsub-topic"
+      ```
 
-        ```json
-        "projects/my-project/subscriptions/my-pubsub-subscription"
-        ```
+      ```json
+      "projects/my-project/subscriptions/my-pubsub-subscription"
+      ```
 
-        ```json
-        "projects/my-project/locations/us-west2/instances/my-redis-instance"
-        ```
+      ```json
+      "projects/my-project/locations/us-west2/instances/my-redis-instance"
+      ```
 
-        ```json
-        "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
-        ```
+      ```json
+      "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
+      ```
 
-      - **`grn`** *(string)*: GCP Resource Name (GRN).
+    - **`grn`** *(string)*: GCP Resource Name (GRN).
 
-        Examples:
-        ```json
-        "projects/my-project/global/networks/my-global-network"
-        ```
+      Examples:
+      ```json
+      "projects/my-project/global/networks/my-global-network"
+      ```
 
-        ```json
-        "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
-        ```
+      ```json
+      "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
+      ```
 
-        ```json
-        "projects/my-project/topics/my-pubsub-topic"
-        ```
+      ```json
+      "projects/my-project/topics/my-pubsub-topic"
+      ```
 
-        ```json
-        "projects/my-project/subscriptions/my-pubsub-subscription"
-        ```
+      ```json
+      "projects/my-project/subscriptions/my-pubsub-subscription"
+      ```
 
-        ```json
-        "projects/my-project/locations/us-west2/instances/my-redis-instance"
-        ```
+      ```json
+      "projects/my-project/locations/us-west2/instances/my-redis-instance"
+      ```
 
-        ```json
-        "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
-        ```
+      ```json
+      "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
+      ```
 
-      - **`vpc_access_connector`** *(string)*: GCP Resource Name (GRN).
+    - **`vpc_access_connector`** *(string)*: GCP Resource Name (GRN).
 
-        Examples:
-        ```json
-        "projects/my-project/global/networks/my-global-network"
-        ```
+      Examples:
+      ```json
+      "projects/my-project/global/networks/my-global-network"
+      ```
 
-        ```json
-        "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
-        ```
+      ```json
+      "projects/my-project/regions/us-west2/subnetworks/my-subnetwork"
+      ```
 
-        ```json
-        "projects/my-project/topics/my-pubsub-topic"
-        ```
+      ```json
+      "projects/my-project/topics/my-pubsub-topic"
+      ```
 
-        ```json
-        "projects/my-project/subscriptions/my-pubsub-subscription"
-        ```
+      ```json
+      "projects/my-project/subscriptions/my-pubsub-subscription"
+      ```
 
-        ```json
-        "projects/my-project/locations/us-west2/instances/my-redis-instance"
-        ```
+      ```json
+      "projects/my-project/locations/us-west2/instances/my-redis-instance"
+      ```
 
-        ```json
-        "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
-        ```
+      ```json
+      "projects/my-project/locations/us-west2/clusters/my-gke-cluster"
+      ```
 
   - **`specs`** *(object)*: Cannot contain additional properties.
     - **`gcp`** *(object)*: . Cannot contain additional properties.

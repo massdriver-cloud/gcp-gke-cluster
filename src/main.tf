@@ -30,8 +30,8 @@ resource "google_container_cluster" "cluster" {
   enable_shielded_nodes = true
 
   # NETWORKING
-  network                     = var.subnetwork.data.infrastructure.gcp_global_network_grn
-  subnetwork                  = var.subnetwork.data.infrastructure.grn
+  network                     = var.subnetwork.infrastructure.gcp_global_network_grn
+  subnetwork                  = var.subnetwork.infrastructure.grn
   networking_mode             = "VPC_NATIVE"
   default_max_pods_per_node   = 32
   enable_intranode_visibility = true
